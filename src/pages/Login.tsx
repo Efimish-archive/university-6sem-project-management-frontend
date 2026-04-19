@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { LogIn, Car, Van } from "lucide-react";
 
-function App() {
+function Login() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,4 +38,4 @@ function App() {
   );
 }
 
-export default App;
+export default Login;
