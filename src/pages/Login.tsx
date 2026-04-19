@@ -1,9 +1,27 @@
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { LogIn, Car, Van } from "lucide-react";
 
+import { postAuthLogin } from "@/api";
+
 function Login() {
+  const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    if (login.length < 1) return alert("Заполните имя пользователя!");
+    if (password.length < 1) return alert("Заполните пароль!");
+
+    const { data, error } = await postAuthLogin({
+      body: { login, password },
+    });
+
+    if (error) return alert(error.error);
+
+    localStorage.setItem("token", data.token);
+    navigate("/");
+  };
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-amber-100">
@@ -27,7 +45,10 @@ function Login() {
         />
         <div className="flex gap-2">
           <Car />
-          <button className="flex w-fit cursor-pointer gap-2 rounded-md border-2 border-green-500 bg-green-400 px-1 font-bold text-neutral-50 text-shadow-black text-shadow-xs">
+          <button
+            className="flex w-fit cursor-pointer gap-2 rounded-md border-2 border-green-500 bg-green-400 px-1 font-bold text-neutral-50 text-shadow-black text-shadow-xs"
+            onClick={handleLogin}
+          >
             <p>Войти</p>
             <LogIn />
           </button>
