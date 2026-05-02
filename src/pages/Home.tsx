@@ -8,6 +8,7 @@ import { useToken } from "@/useToken";
 
 import type { PostNumbersCheckResponse } from "@/api";
 import { postNumbersCheck } from "@/api";
+import NumberCheckResult from "@/components/NumberCheckResult";
 import clsx from "clsx";
 import { Link } from "react-router";
 
@@ -92,14 +93,7 @@ function Home() {
             Узнать номер
           </button>
         </form>
-        <div
-          className={clsx(
-            "rounded-sm border-2 border-neutral-900 bg-neutral-50 px-1",
-            { hidden: result === null },
-          )}
-        >
-          <pre>{JSON.stringify(result, null, 2)}</pre>
-        </div>
+        <NumberCheckResult result={result} />
       </div>
     </div>
   );

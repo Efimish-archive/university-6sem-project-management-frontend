@@ -4,6 +4,8 @@ import { Camera, CircleStop, LoaderCircle, Play } from "lucide-react";
 import clsx from "clsx";
 
 import { postNumbersCheck } from "@/api";
+import type { PostNumbersCheckResponse } from "@/api";
+import NumberCheckResult from "@/components/NumberCheckResult";
 import { useToken } from "@/useToken";
 
 const CHECK_INTERVAL_MS = 500;
@@ -18,7 +20,7 @@ function RealtimeCheck() {
 
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const [resultNumber, setResultNumber] = useState<string | null>(null);
+  const [result, setResult] = useState<PostNumbersCheckResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const stopCamera = useCallback(() => {
@@ -102,7 +104,7 @@ function RealtimeCheck() {
           },
         });
 
-        if (typeof data !== "undefined") setResultNumber(data.number);
+        if (typeof data !== "undefined") setResult(data);
       } catch {
         setErrorMessage("Ошибка при отправке кадра на сервер");
       } finally {
@@ -174,14 +176,6 @@ function RealtimeCheck() {
           </div>
           <div
             className={clsx(
-              "rounded-sm border-2 border-neutral-900 bg-neutral-50 px-2 py-1 font-bold",
-              { hidden: resultNumber === null },
-            )}
-          >
-            Номер: {resultNumber}
-          </div>
-          <div
-            className={clsx(
               "rounded-sm border-2 border-red-700 bg-red-100 px-2 py-1 font-bold text-red-800",
               { hidden: errorMessage === null },
             )}
@@ -189,6 +183,8 @@ function RealtimeCheck() {
             {errorMessage}
           </div>
         </div>
+
+        <NumberCheckResult result={result} />
 
         <canvas ref={canvasRef} className="hidden" />
       </div>
