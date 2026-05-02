@@ -6,13 +6,15 @@ import {
 } from "react";
 import { useToken } from "@/useToken";
 
+import type { PostNumbersCheckResponse } from "@/api";
 import { postNumbersCheck } from "@/api";
 import clsx from "clsx";
+import { Link } from "react-router";
 
 function Home() {
   useToken();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [resultNumber, setResultNumber] = useState<string | null>(null);
+  const [result, setResult] = useState<PostNumbersCheckResponse | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +50,7 @@ function Home() {
 
     // TODO: обработать
     if (typeof data === "undefined") return;
-    setResultNumber(data.number);
+    setResult(data);
   };
 
   return (
@@ -57,6 +59,12 @@ function Home() {
         <h1 className="text-2xl font-extrabold text-amber-700 text-shadow-amber-200 text-shadow-lg">
           Добро пожаловать!
         </h1>
+        <Link
+          className="font-bold text-blue-700 underline underline-offset-2"
+          to="/realtime"
+        >
+          Определять номер в реальном времени
+        </Link>
         <form
           className="flex flex-col items-center justify-center gap-2"
           onSubmit={handleSubmit}
@@ -87,10 +95,10 @@ function Home() {
         <div
           className={clsx(
             "rounded-sm border-2 border-neutral-900 bg-neutral-50 px-1",
-            { hidden: resultNumber === null },
+            { hidden: result === null },
           )}
         >
-          {resultNumber}
+          <pre>{JSON.stringify(result, null, 2)}</pre>
         </div>
       </div>
     </div>

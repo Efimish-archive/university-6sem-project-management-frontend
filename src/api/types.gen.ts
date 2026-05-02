@@ -240,6 +240,15 @@ export type PostNumbersCheckResponses = {
      */
     200: {
         number: string;
+        isInDb: boolean;
+        info?: {
+            car: string;
+            user: {
+                firstName: string;
+                lastName: string;
+                middleName: string;
+            };
+        };
     };
 };
 
