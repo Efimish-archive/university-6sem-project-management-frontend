@@ -10,7 +10,6 @@ import type { PostNumbersCheckResponse } from "@/api";
 import { postNumbersCheck } from "@/api";
 import NumberCheckResult from "@/components/NumberCheckResult";
 import clsx from "clsx";
-import { Link } from "react-router";
 
 function Home() {
   useToken();
@@ -55,17 +54,11 @@ function Home() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-amber-100">
+    <div className="flex size-full items-center justify-center bg-amber-100">
       <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-yellow-500 bg-yellow-400 px-6 py-2">
         <h1 className="text-2xl font-extrabold text-amber-700 text-shadow-amber-200 text-shadow-lg">
           Добро пожаловать!
         </h1>
-        <Link
-          className="font-bold text-blue-700 underline underline-offset-2"
-          to="/realtime"
-        >
-          Определять номер в реальном времени
-        </Link>
         <form
           className="flex flex-col items-center justify-center gap-2"
           onSubmit={handleSubmit}

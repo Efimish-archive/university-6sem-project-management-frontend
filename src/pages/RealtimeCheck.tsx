@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
 import { Camera, CircleStop, LoaderCircle, Play } from "lucide-react";
 import clsx from "clsx";
 
@@ -40,8 +39,8 @@ function RealtimeCheck() {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: "environment",
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: 768 },
+          height: { ideal: 256 },
         },
         audio: false,
       });
@@ -63,7 +62,11 @@ function RealtimeCheck() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
 
-    if (!video || !canvas || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+    if (
+      !video ||
+      !canvas ||
+      video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA
+    ) {
       return;
     }
 
@@ -124,19 +127,13 @@ function RealtimeCheck() {
   useEffect(() => stopCamera, [stopCamera]);
 
   return (
-    <div className="flex min-h-screen w-screen items-center justify-center bg-amber-100 px-4 py-6">
+    <div className="flex size-full items-center justify-center bg-amber-100 px-4 py-6">
       <div className="flex w-full max-w-4xl flex-col gap-4 rounded-lg border-2 border-yellow-500 bg-yellow-400 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-extrabold text-amber-700 text-shadow-amber-200 text-shadow-lg">
               Определение номера в реальном времени
             </h1>
-            <Link
-              className="font-bold text-blue-700 underline underline-offset-2"
-              to="/"
-            >
-              Проверить номер по картинке
-            </Link>
           </div>
           <button
             className={clsx(
@@ -156,7 +153,7 @@ function RealtimeCheck() {
         <div className="overflow-hidden rounded-md border-2 border-neutral-900 bg-neutral-950">
           <video
             ref={videoRef}
-            className="aspect-video w-full object-contain"
+            className="aspect-3/1 w-full object-contain"
             muted
             playsInline
           />
