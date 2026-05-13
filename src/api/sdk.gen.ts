@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteNumbersByNumberData, DeleteNumbersByNumberErrors, DeleteNumbersByNumberResponses, GetNumbersByNumberData, GetNumbersByNumberErrors, GetNumbersByNumberResponses, GetNumbersData, GetNumbersErrors, GetNumbersResponses, PostAuthLoginData, PostAuthLoginErrors, PostAuthLoginResponses, PostNumbersCheckData, PostNumbersCheckResponses, PostNumbersData, PostNumbersErrors, PostNumbersResponses, PutNumbersByNumberData, PutNumbersByNumberErrors, PutNumbersByNumberResponses } from './types.gen';
+import type { DeleteNumbersByNumberData, DeleteNumbersByNumberErrors, DeleteNumbersByNumberResponses, DeleteUsersByIdData, DeleteUsersByIdErrors, DeleteUsersByIdResponses, GetNumbersByNumberData, GetNumbersByNumberErrors, GetNumbersByNumberResponses, GetNumbersData, GetNumbersErrors, GetNumbersResponses, GetUsersByIdData, GetUsersByIdErrors, GetUsersByIdResponses, GetUsersData, GetUsersErrors, GetUsersResponses, PostAuthLoginData, PostAuthLoginErrors, PostAuthLoginResponses, PostNumbersCheckData, PostNumbersCheckResponses, PostNumbersData, PostNumbersErrors, PostNumbersResponses, PostUsersData, PostUsersErrors, PostUsersResponses, PutNumbersByNumberData, PutNumbersByNumberErrors, PutNumbersByNumberResponses, PutUsersByIdData, PutUsersByIdErrors, PutUsersByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -27,7 +27,31 @@ export const postAuthLogin = <ThrowOnError extends boolean = false>(options: Opt
     }
 });
 
-export const getNumbers = <ThrowOnError extends boolean = false>(options: Options<GetNumbersData, ThrowOnError>) => (options.client ?? client).get<GetNumbersResponses, GetNumbersErrors, ThrowOnError>({ url: '/numbers', ...options });
+export const getUsers = <ThrowOnError extends boolean = false>(options?: Options<GetUsersData, ThrowOnError>) => (options?.client ?? client).get<GetUsersResponses, GetUsersErrors, ThrowOnError>({ url: '/users', ...options });
+
+export const postUsers = <ThrowOnError extends boolean = false>(options: Options<PostUsersData, ThrowOnError>) => (options.client ?? client).post<PostUsersResponses, PostUsersErrors, ThrowOnError>({
+    url: '/users',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const deleteUsersById = <ThrowOnError extends boolean = false>(options: Options<DeleteUsersByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteUsersByIdResponses, DeleteUsersByIdErrors, ThrowOnError>({ url: '/users/{id}', ...options });
+
+export const getUsersById = <ThrowOnError extends boolean = false>(options: Options<GetUsersByIdData, ThrowOnError>) => (options.client ?? client).get<GetUsersByIdResponses, GetUsersByIdErrors, ThrowOnError>({ url: '/users/{id}', ...options });
+
+export const putUsersById = <ThrowOnError extends boolean = false>(options: Options<PutUsersByIdData, ThrowOnError>) => (options.client ?? client).put<PutUsersByIdResponses, PutUsersByIdErrors, ThrowOnError>({
+    url: '/users/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const getNumbers = <ThrowOnError extends boolean = false>(options?: Options<GetNumbersData, ThrowOnError>) => (options?.client ?? client).get<GetNumbersResponses, GetNumbersErrors, ThrowOnError>({ url: '/numbers', ...options });
 
 export const postNumbers = <ThrowOnError extends boolean = false>(options: Options<PostNumbersData, ThrowOnError>) => (options.client ?? client).post<PostNumbersResponses, PostNumbersErrors, ThrowOnError>({
     url: '/numbers',

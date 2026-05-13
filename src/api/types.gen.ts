@@ -39,11 +39,186 @@ export type PostAuthLoginResponses = {
 
 export type PostAuthLoginResponse = PostAuthLoginResponses[keyof PostAuthLoginResponses];
 
+export type GetUsersData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/users';
+};
+
+export type GetUsersErrors = {
+    /**
+     * Response for status 401
+     */
+    401: Error;
+};
+
+export type GetUsersError = GetUsersErrors[keyof GetUsersErrors];
+
+export type GetUsersResponses = {
+    /**
+     * Response for status 200
+     */
+    200: Array<{
+        id: number;
+        firstName: string;
+        lastName: string;
+        middleName: string;
+    }>;
+};
+
+export type GetUsersResponse = GetUsersResponses[keyof GetUsersResponses];
+
+export type PostUsersData = {
+    body: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        middleName: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/users';
+};
+
+export type PostUsersErrors = {
+    /**
+     * Response for status 401
+     */
+    401: Error;
+};
+
+export type PostUsersError = PostUsersErrors[keyof PostUsersErrors];
+
+export type PostUsersResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        middleName: string;
+    };
+};
+
+export type PostUsersResponse = PostUsersResponses[keyof PostUsersResponses];
+
+export type DeleteUsersByIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/users/{id}';
+};
+
+export type DeleteUsersByIdErrors = {
+    /**
+     * Response for status 401
+     */
+    401: Error;
+    /**
+     * Response for status 404
+     */
+    404: Error;
+};
+
+export type DeleteUsersByIdError = DeleteUsersByIdErrors[keyof DeleteUsersByIdErrors];
+
+export type DeleteUsersByIdResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        middleName: string;
+    };
+};
+
+export type DeleteUsersByIdResponse = DeleteUsersByIdResponses[keyof DeleteUsersByIdResponses];
+
+export type GetUsersByIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/users/{id}';
+};
+
+export type GetUsersByIdErrors = {
+    /**
+     * Response for status 401
+     */
+    401: Error;
+    /**
+     * Response for status 404
+     */
+    404: Error;
+};
+
+export type GetUsersByIdError = GetUsersByIdErrors[keyof GetUsersByIdErrors];
+
+export type GetUsersByIdResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        middleName: string;
+    };
+};
+
+export type GetUsersByIdResponse = GetUsersByIdResponses[keyof GetUsersByIdResponses];
+
+export type PutUsersByIdData = {
+    body: {
+        id?: number;
+        firstName?: string;
+        lastName?: string;
+        middleName?: string;
+    };
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/users/{id}';
+};
+
+export type PutUsersByIdErrors = {
+    /**
+     * Response for status 401
+     */
+    401: Error;
+    /**
+     * Response for status 404
+     */
+    404: Error;
+};
+
+export type PutUsersByIdError = PutUsersByIdErrors[keyof PutUsersByIdErrors];
+
+export type PutUsersByIdResponses = {
+    /**
+     * Response for status 200
+     */
+    200: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        middleName: string;
+    };
+};
+
+export type PutUsersByIdResponse = PutUsersByIdResponses[keyof PutUsersByIdResponses];
+
 export type GetNumbersData = {
     body?: never;
-    headers: {
-        authorization: string;
-    };
     path?: never;
     query?: never;
     url: '/numbers';
@@ -77,9 +252,6 @@ export type PostNumbersData = {
         car: string;
         userId: number;
     };
-    headers: {
-        authorization: string;
-    };
     path?: never;
     query?: never;
     url: '/numbers';
@@ -109,9 +281,6 @@ export type PostNumbersResponse = PostNumbersResponses[keyof PostNumbersResponse
 
 export type DeleteNumbersByNumberData = {
     body?: never;
-    headers: {
-        authorization: string;
-    };
     path: {
         number: string;
     };
@@ -147,9 +316,6 @@ export type DeleteNumbersByNumberResponse = DeleteNumbersByNumberResponses[keyof
 
 export type GetNumbersByNumberData = {
     body?: never;
-    headers: {
-        authorization: string;
-    };
     path: {
         number: string;
     };
@@ -188,9 +354,6 @@ export type PutNumbersByNumberData = {
         number?: string;
         car?: string;
         userId?: number;
-    };
-    headers: {
-        authorization: string;
     };
     path: {
         number: string;
