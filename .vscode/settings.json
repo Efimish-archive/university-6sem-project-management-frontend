@@ -1,4 +1,8 @@
 {
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "tailwindCSS.classFunctions": ["clsx", "twMerge", "cva", "cn"],
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
