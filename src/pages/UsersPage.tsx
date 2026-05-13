@@ -1,9 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSeoMeta } from "@unhead/react";
 import { getUsers } from "@/api";
 import { useToken } from "@/useToken";
 
 function UsersPage() {
   useToken();
+  useSeoMeta({
+    title: "Пользователи",
+  });
   const query = useQuery({
     queryKey: ["users"],
     queryFn: () =>

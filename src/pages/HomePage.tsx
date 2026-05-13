@@ -5,6 +5,7 @@ import {
   type SubmitEventHandler,
 } from "react";
 import { useToken } from "@/useToken";
+import { useSeoMeta } from "@unhead/react";
 
 import type { PostNumbersCheckResponse } from "@/api";
 import { postNumbersCheck } from "@/api";
@@ -13,6 +14,10 @@ import clsx from "clsx";
 
 function HomePage() {
   useToken();
+  useSeoMeta({
+    title: "Номер на фото",
+  });
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<PostNumbersCheckResponse | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);

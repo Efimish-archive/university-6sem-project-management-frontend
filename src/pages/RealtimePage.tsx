@@ -6,11 +6,15 @@ import { postNumbersCheck } from "@/api";
 import type { PostNumbersCheckResponse } from "@/api";
 import NumberCheckResult from "@/components/NumberCheckResult";
 import { useToken } from "@/useToken";
+import { useSeoMeta } from "@unhead/react";
 
 const CHECK_INTERVAL_MS = 500;
 
 function RealtimePage() {
   useToken();
+  useSeoMeta({
+    title: "Номер на видео",
+  });
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);

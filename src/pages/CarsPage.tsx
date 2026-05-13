@@ -1,9 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { useSeoMeta } from "@unhead/react";
 import { getNumbers } from "@/api";
 import { useToken } from "@/useToken";
 
 function CarsPage() {
   useToken();
+  useSeoMeta({
+    title: "Номера",
+  });
   const query = useQuery({
     queryKey: ["numbers"],
     queryFn: () =>

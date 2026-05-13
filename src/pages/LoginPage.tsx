@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router";
+import { useSeoMeta } from "@unhead/react";
 import { useState } from "react";
 import { LogIn, Car, Van } from "lucide-react";
 
 import { postAuthLogin } from "@/api";
 
 function LoginPage() {
+  useSeoMeta({
+    title: "Вход в систему",
+  });
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");

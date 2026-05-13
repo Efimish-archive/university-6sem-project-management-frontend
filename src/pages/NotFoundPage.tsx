@@ -1,7 +1,11 @@
+import { useSeoMeta } from "@unhead/react";
 import { Link } from "react-router";
 import { Home } from "lucide-react";
 
 function NotFoundPage() {
+  useSeoMeta({
+    title: "Страница не найдена",
+  });
   return (
     <div className="flex size-full items-center justify-center">
       <div className="flex flex-col items-center gap-2 rounded-lg border-2 border-yellow-500 bg-yellow-400 px-6 py-2">
