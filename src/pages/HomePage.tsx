@@ -11,7 +11,7 @@ import { postNumbersCheck } from "@/api";
 import NumberCheckResult from "@/components/NumberCheckResult";
 import clsx from "clsx";
 
-function Home() {
+function HomePage() {
   useToken();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [result, setResult] = useState<PostNumbersCheckResponse | null>(null);
@@ -54,7 +54,7 @@ function Home() {
   };
 
   return (
-    <div className="flex size-full items-center justify-center bg-amber-100">
+    <div className="flex size-full items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-yellow-500 bg-yellow-400 px-6 py-2">
         <h1 className="text-2xl font-extrabold text-amber-700 text-shadow-amber-200 text-shadow-lg">
           Добро пожаловать!
@@ -92,4 +92,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomePage;

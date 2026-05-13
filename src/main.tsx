@@ -11,10 +11,12 @@ import {
   LogOutIcon,
 } from "lucide-react";
 
-import Home from "@/pages/Home";
-import Login from "@/pages/Login.tsx";
-import NotFound from "@/pages/NotFound";
-import RealtimeCheck from "@/pages/RealtimeCheck";
+import HomePage from "@/pages/HomePage";
+import RealtimePage from "@/pages/RealtimePage";
+import UsersPage from "@/pages/UsersPage";
+import CarsPage from "@/pages/CarsPage";
+import LoginPage from "@/pages/LoginPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -61,10 +63,12 @@ createRoot(document.getElementById("root")!).render(
         </aside>
         <main className="min-h-screen w-full">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/realtime" element={<RealtimeCheck />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/realtime" element={<RealtimePage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/cars" element={<CarsPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </div>

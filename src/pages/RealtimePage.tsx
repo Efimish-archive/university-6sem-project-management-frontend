@@ -9,7 +9,7 @@ import { useToken } from "@/useToken";
 
 const CHECK_INTERVAL_MS = 500;
 
-function RealtimeCheck() {
+function RealtimePage() {
   useToken();
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -127,7 +127,7 @@ function RealtimeCheck() {
   useEffect(() => stopCamera, [stopCamera]);
 
   return (
-    <div className="flex size-full items-center justify-center bg-amber-100 px-4 py-6">
+    <div className="flex size-full items-center justify-center">
       <div className="flex w-full max-w-4xl flex-col gap-4 rounded-lg border-2 border-yellow-500 bg-yellow-400 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -189,4 +189,4 @@ function RealtimeCheck() {
   );
 }
 
-export default RealtimeCheck;
+export default RealtimePage;

@@ -4,7 +4,7 @@ import { LogIn, Car, Van } from "lucide-react";
 
 import { postAuthLogin } from "@/api";
 
-function Login() {
+function LoginPage() {
   const navigate = useNavigate();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +24,7 @@ function Login() {
   };
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-amber-100">
+    <div className="flex size-full items-center justify-center">
       <div className="flex flex-col items-center gap-2 rounded-lg border-2 border-yellow-500 bg-yellow-400 px-6 py-2">
         <h1 className="text-2xl font-extrabold text-amber-700 text-shadow-amber-200 text-shadow-lg">
           Войдите в систему
@@ -59,4 +59,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginPage;
