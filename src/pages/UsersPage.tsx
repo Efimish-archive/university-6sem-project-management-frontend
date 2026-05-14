@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useSeoMeta } from "@unhead/react";
@@ -24,6 +24,7 @@ type UserDraft = {
   lastName: string;
   firstName: string;
   middleName: string;
+  hasChanges: boolean;
 };
 
 type EditableUserField = "lastName" | "firstName" | "middleName";
@@ -39,6 +40,7 @@ const createDraft = (user?: User): UserDraft => ({
   lastName: user?.lastName ?? "",
   firstName: user?.firstName ?? "",
   middleName: user?.middleName ?? "",
+  hasChanges: !user,
 });
 
 const toCreateUserBody = (user: UserDraft) =>
@@ -190,63 +192,68 @@ function UsersPage() {
       setDeletingId(null);
     },
   });
+  const { mutate: saveUser } = saveMutation;
+  const { mutate: deleteUser } = deleteMutation;
 
-  const updateUser = (
-    clientId: string,
-    field: EditableUserField,
-    value: string,
-  ) => {
-    setNewUsers((currentUsers) => {
-      const hasNewUser = currentUsers.some((user) => user.clientId === clientId);
+  const updateUser = useCallback(
+    (clientId: string, field: EditableUserField, value: string) => {
+      setNewUsers((currentUsers) => {
+        const hasNewUser = currentUsers.some(
+          (user) => user.clientId === clientId,
+        );
 
-      if (!hasNewUser) {
-        return currentUsers;
-      }
+        if (!hasNewUser) {
+          return currentUsers;
+        }
 
-      return currentUsers.map((user) =>
-        user.clientId === clientId ? { ...user, [field]: value } : user,
-      );
-    });
-    setEditedUsers((currentUsers) => {
-      const sourceUser =
-        Object.values(currentUsers).find((user) => user.clientId === clientId) ??
-        query.data?.data.find((user) => `user-${user.id}` === clientId);
-      const originalUser = query.data?.data.find(
-        (user) => `user-${user.id}` === clientId,
-      );
+        return currentUsers.map((user) =>
+          user.clientId === clientId ? { ...user, [field]: value } : user,
+        );
+      });
+      setEditedUsers((currentUsers) => {
+        const sourceUser =
+          Object.values(currentUsers).find(
+            (user) => user.clientId === clientId,
+          ) ?? query.data?.data.find((user) => `user-${user.id}` === clientId);
+        const originalUser = query.data?.data.find(
+          (user) => `user-${user.id}` === clientId,
+        );
 
-      if (!sourceUser) {
-        return currentUsers;
-      }
+        if (!sourceUser) {
+          return currentUsers;
+        }
 
-      const draft =
-        "originalId" in sourceUser
-          ? sourceUser
-          : createDraft(sourceUser as User);
+        const draft =
+          "originalId" in sourceUser
+            ? sourceUser
+            : createDraft(sourceUser as User);
 
-      if (draft.originalId === null) {
-        return currentUsers;
-      }
+        if (draft.originalId === null) {
+          return currentUsers;
+        }
 
-      const nextDraft = {
-        ...draft,
-        [field]: value,
-      };
+        const nextDraft = {
+          ...draft,
+          [field]: value,
+          hasChanges: true,
+        };
 
-      if (originalUser && isSameUser(nextDraft, originalUser)) {
-        const nextUsers = { ...currentUsers };
-        delete nextUsers[draft.originalId];
-        return nextUsers;
-      }
+        if (originalUser && isSameUser(nextDraft, originalUser)) {
+          const nextUsers = { ...currentUsers };
+          delete nextUsers[draft.originalId];
+          return nextUsers;
+        }
 
-      return {
-        ...currentUsers,
-        [draft.originalId]: nextDraft,
-      };
-    });
-  };
+        return {
+          ...currentUsers,
+          [draft.originalId]: nextDraft,
+        };
+      });
+    },
+    [query.data?.data],
+  );
 
-  const cancelUserChanges = (user: UserDraft) => {
+  const cancelUserChanges = useCallback((user: UserDraft) => {
     setErrorMessage(null);
 
     if (user.originalId === null) {
@@ -261,126 +268,129 @@ function UsersPage() {
       delete nextUsers[user.originalId!];
       return nextUsers;
     });
-  };
+  }, []);
 
-  const addUser = () => {
+  const addUser = useCallback(() => {
     setErrorMessage(null);
     setNewUsers((currentUsers) => [createDraft(), ...currentUsers]);
-  };
+  }, []);
 
   const users = useMemo(
     () => [
       ...newUsers,
-      ...(query.data?.data.map((user) => editedUsers[user.id] ?? createDraft(user)) ??
-        []),
+      ...(query.data?.data.map(
+        (user) => editedUsers[user.id] ?? createDraft(user),
+      ) ?? []),
     ],
     [editedUsers, newUsers, query.data?.data],
   );
+  const getUserRowId = useCallback((user: UserDraft) => user.clientId, []);
 
-  const columns: ColumnDef<UserDraft>[] = [
-    {
-      id: "actions",
-      header: "",
-      cell: ({ row }) => {
-        const isSaving = savingId === row.original.clientId;
-        const isDeleting = deletingId === row.original.clientId;
-        const isBusy = isSaving || isDeleting;
-        const hasChanges =
-          row.original.originalId === null ||
-          Boolean(editedUsers[row.original.originalId]);
-        const canSave = hasChanges && isValidUser(row.original);
+  const columns = useMemo<ColumnDef<UserDraft>[]>(
+    () => [
+      {
+        id: "actions",
+        header: "",
+        cell: ({ row }) => {
+          const isSaving = savingId === row.original.clientId;
+          const isDeleting = deletingId === row.original.clientId;
+          const isBusy = isSaving || isDeleting;
+          const hasChanges = row.original.hasChanges;
+          const canSave = hasChanges && isValidUser(row.original);
 
-        return (
-          <div className="flex justify-start gap-2">
-            <Button
-              aria-label="Сохранить пользователя"
-              title="Сохранить"
-              size="icon-sm"
-              disabled={isBusy || !canSave}
-              onClick={() => saveMutation.mutate(row.original)}
-            >
-              <Save />
-            </Button>
-            <Button
-              aria-label="Отменить изменения"
-              title="Отменить"
-              size="icon-sm"
-              variant="outline"
-              disabled={isBusy || !hasChanges}
-              onClick={() => cancelUserChanges(row.original)}
-            >
-              <RotateCcw />
-            </Button>
-            <Button
-              aria-label="Удалить пользователя"
-              title="Удалить"
-              size="icon-sm"
-              variant="destructive"
-              disabled={isBusy}
-              onClick={() => deleteMutation.mutate(row.original)}
-            >
-              <Trash2 />
-            </Button>
-          </div>
-        );
+          return (
+            <div className="flex justify-start gap-2">
+              <Button
+                aria-label="Сохранить пользователя"
+                title="Сохранить"
+                size="icon-sm"
+                disabled={isBusy || !canSave}
+                onClick={() => saveUser(row.original)}
+              >
+                <Save />
+              </Button>
+              <Button
+                aria-label="Отменить изменения"
+                title="Отменить"
+                size="icon-sm"
+                variant="outline"
+                disabled={isBusy || !hasChanges}
+                onClick={() => cancelUserChanges(row.original)}
+              >
+                <RotateCcw />
+              </Button>
+              <Button
+                aria-label="Удалить пользователя"
+                title="Удалить"
+                size="icon-sm"
+                variant="destructive"
+                disabled={isBusy}
+                onClick={() => deleteUser(row.original)}
+              >
+                <Trash2 />
+              </Button>
+            </div>
+          );
+        },
       },
-    },
-    {
-      accessorKey: "id",
-      header: "ID",
-      cell: ({ row }) => (
-        <span className="block w-16 text-sm text-muted-foreground">
-          {row.original.id ?? "Новый"}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "lastName",
-      header: "Фамилия",
-      cell: ({ row }) => (
-        <input
-          aria-label="Фамилия"
-          className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-          value={row.original.lastName}
-          onChange={(event) =>
-            updateUser(row.original.clientId, "lastName", event.target.value)
-          }
-        />
-      ),
-    },
-    {
-      accessorKey: "firstName",
-      header: "Имя",
-      cell: ({ row }) => (
-        <input
-          aria-label="Имя"
-          className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-          value={row.original.firstName}
-          onChange={(event) =>
-            updateUser(row.original.clientId, "firstName", event.target.value)
-          }
-        />
-      ),
-    },
-    {
-      accessorKey: "middleName",
-      header: "Отчество",
-      cell: ({ row }) => (
-        <input
-          aria-label="Отчество"
-          className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-          value={row.original.middleName}
-          onChange={(event) =>
-            updateUser(
-              row.original.clientId,
-              "middleName",
-              event.target.value,
-            )
-          }
-        />
-      ),
-    },
-  ];
+      {
+        accessorKey: "id",
+        header: "ID",
+        cell: ({ row }) => (
+          <span className="block w-16 text-sm text-muted-foreground">
+            {row.original.id ?? "Новый"}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "lastName",
+        header: "Фамилия",
+        cell: ({ row }) => (
+          <input
+            aria-label="Фамилия"
+            className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            value={row.original.lastName}
+            onChange={(event) =>
+              updateUser(row.original.clientId, "lastName", event.target.value)
+            }
+          />
+        ),
+      },
+      {
+        accessorKey: "firstName",
+        header: "Имя",
+        cell: ({ row }) => (
+          <input
+            aria-label="Имя"
+            className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            value={row.original.firstName}
+            onChange={(event) =>
+              updateUser(row.original.clientId, "firstName", event.target.value)
+            }
+          />
+        ),
+      },
+      {
+        accessorKey: "middleName",
+        header: "Отчество",
+        cell: ({ row }) => (
+          <input
+            aria-label="Отчество"
+            className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            value={row.original.middleName}
+            onChange={(event) =>
+              updateUser(
+                row.original.clientId,
+                "middleName",
+                event.target.value,
+              )
+            }
+          />
+        ),
+      },
+    ],
+    [cancelUserChanges, deletingId, deleteUser, saveUser, savingId, updateUser],
+  );
 
   if (query.isPending) {
     return <div className="p-4 text-sm text-muted-foreground">Загрузка...</div>;
@@ -415,6 +425,7 @@ function UsersPage() {
           className="max-h-full overflow-auto bg-background"
           columns={columns}
           data={users}
+          getRowId={getUserRowId}
         />
       </div>
     </div>
