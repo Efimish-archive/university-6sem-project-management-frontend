@@ -60,10 +60,10 @@ export type GetUsersResponses = {
      * Response for status 200
      */
     200: Array<{
-        id: number;
         firstName: string;
         lastName: string;
         middleName: string;
+        id: number;
     }>;
 };
 
@@ -71,7 +71,6 @@ export type GetUsersResponse = GetUsersResponses[keyof GetUsersResponses];
 
 export type PostUsersData = {
     body: {
-        id: number;
         firstName: string;
         lastName: string;
         middleName: string;
@@ -95,10 +94,10 @@ export type PostUsersResponses = {
      * Response for status 200
      */
     200: {
-        id: number;
         firstName: string;
         lastName: string;
         middleName: string;
+        id: number;
     };
 };
 
@@ -131,10 +130,10 @@ export type DeleteUsersByIdResponses = {
      * Response for status 200
      */
     200: {
-        id: number;
         firstName: string;
         lastName: string;
         middleName: string;
+        id: number;
     };
 };
 
@@ -167,10 +166,10 @@ export type GetUsersByIdResponses = {
      * Response for status 200
      */
     200: {
-        id: number;
         firstName: string;
         lastName: string;
         middleName: string;
+        id: number;
     };
 };
 
@@ -178,10 +177,10 @@ export type GetUsersByIdResponse = GetUsersByIdResponses[keyof GetUsersByIdRespo
 
 export type PutUsersByIdData = {
     body: {
-        id?: number;
         firstName?: string;
         lastName?: string;
         middleName?: string;
+        id?: number;
     };
     path: {
         id: number;
@@ -208,10 +207,10 @@ export type PutUsersByIdResponses = {
      * Response for status 200
      */
     200: {
-        id: number;
         firstName: string;
         lastName: string;
         middleName: string;
+        id: number;
     };
 };
 
