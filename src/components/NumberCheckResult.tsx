@@ -1,4 +1,10 @@
-import { BadgeCheck, CarFront, CircleHelp, Sparkles, UserRound } from "lucide-react";
+import {
+  BadgeCheck,
+  CarFront,
+  CircleHelp,
+  Sparkles,
+  UserRound,
+} from "lucide-react";
 import clsx from "clsx";
 
 import type { PostNumbersCheckResponse } from "@/api";
@@ -29,16 +35,16 @@ function NumberCheckResult({ result }: NumberCheckResultProps) {
           : "border-fuchsia-700 bg-pink-200 text-fuchsia-950",
       )}
     >
-      <div className="absolute -right-10 -top-8 -z-10 h-28 w-28 rotate-12 rounded-full bg-cyan-300 opacity-70" />
+      <div className="absolute -top-8 -right-10 -z-10 h-28 w-28 rotate-12 rounded-full bg-cyan-300 opacity-70" />
       <div className="absolute -bottom-10 left-8 -z-10 h-24 w-24 -rotate-12 rounded-full bg-yellow-300 opacity-70" />
 
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 text-sm uppercase tracking-wide">
+          <div className="flex items-center gap-2 text-sm tracking-wide uppercase">
             <Sparkles size={18} />
             {result.isInDb ? "База сказала: знакомый" : "База пожала плечами"}
           </div>
-          <div className="mt-1 text-4xl font-extrabold text-shadow-white text-shadow-sm">
+          <div className="mt-1 text-4xl font-extrabold text-shadow-sm text-shadow-white">
             {result.number}
           </div>
         </div>
