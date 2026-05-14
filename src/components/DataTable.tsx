@@ -4,10 +4,15 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
+  type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/Button";
 import {
   Table,
   TableBody,
@@ -30,11 +35,17 @@ export function DataTable<TData, TValue>({
   className,
   getRowId,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
     data,
     columns,
     getRowId,
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -45,13 +56,31 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                  <TableHead key={header.id} className="bg-background">
+                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                      <Button
+                        className="-ml-2"
+                        size="sm"
+                        variant="ghost"
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
+                        {{
+                          asc: <ArrowUp />,
+                          desc: <ArrowDown />,
+                        }[header.column.getIsSorted() as string] ?? (
+                          <ChevronsUpDown />
+                        )}
+                      </Button>
+                    ) : (
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )
+                    )}
                   </TableHead>
                 );
               })}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useSeoMeta } from "@unhead/react";
@@ -13,6 +13,7 @@ import {
 import { useToken } from "@/useToken";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/Button";
+import { Input } from "@/components/Input";
 import { Plus, RotateCcw, Save, Trash2 } from "lucide-react";
 
 type User = GetUsersResponse[number];
@@ -81,6 +82,74 @@ const getErrorMessage = (error: unknown) => {
 
   return "Не удалось выполнить операцию";
 };
+
+type EditableUserCellProps = {
+  ariaLabel: string;
+  clientId: string;
+  field: EditableUserField;
+  value: string;
+  onCommit: (clientId: string, field: EditableUserField, value: string) => void;
+};
+
+const EditableUserCell = memo(function EditableUserCell({
+  ariaLabel,
+  clientId,
+  field,
+  value,
+  onCommit,
+}: EditableUserCellProps) {
+  const commit = useCallback(
+    (nextValue: string) => {
+      if (nextValue !== value) {
+        onCommit(clientId, field, nextValue);
+      }
+    },
+    [clientId, field, onCommit, value],
+  );
+
+  const reset = useCallback(
+    (input: HTMLInputElement) => {
+      input.value = value;
+    },
+    [value],
+  );
+
+  return (
+    <Input
+      aria-label={ariaLabel}
+      className="min-w-36"
+      defaultValue={value}
+      onBlur={(event) => commit(event.currentTarget.value)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          commit(event.currentTarget.value);
+          event.currentTarget.blur();
+        }
+
+        if (event.key === "Escape") {
+          reset(event.currentTarget);
+          event.currentTarget.blur();
+        }
+      }}
+    />
+  );
+});
+
+const renderEditableCell = (
+  ariaLabel: string,
+  field: EditableUserField,
+  user: UserDraft,
+  onCommit: EditableUserCellProps["onCommit"],
+) => (
+  <EditableUserCell
+    key={`${user.clientId}-${field}-${user[field]}`}
+    ariaLabel={ariaLabel}
+    clientId={user.clientId}
+    field={field}
+    value={user[field]}
+    onCommit={onCommit}
+  />
+);
 
 function UsersPage() {
   useToken();
@@ -290,6 +359,7 @@ function UsersPage() {
     () => [
       {
         id: "actions",
+        enableSorting: false,
         header: "",
         cell: ({ row }) => {
           const isSaving = savingId === row.original.clientId;
@@ -345,48 +415,25 @@ function UsersPage() {
       {
         accessorKey: "lastName",
         header: "Фамилия",
-        cell: ({ row }) => (
-          <input
-            aria-label="Фамилия"
-            className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            value={row.original.lastName}
-            onChange={(event) =>
-              updateUser(row.original.clientId, "lastName", event.target.value)
-            }
-          />
-        ),
+        cell: ({ row }) =>
+          renderEditableCell("Фамилия", "lastName", row.original, updateUser),
       },
       {
         accessorKey: "firstName",
         header: "Имя",
-        cell: ({ row }) => (
-          <input
-            aria-label="Имя"
-            className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            value={row.original.firstName}
-            onChange={(event) =>
-              updateUser(row.original.clientId, "firstName", event.target.value)
-            }
-          />
-        ),
+        cell: ({ row }) =>
+          renderEditableCell("Имя", "firstName", row.original, updateUser),
       },
       {
         accessorKey: "middleName",
         header: "Отчество",
-        cell: ({ row }) => (
-          <input
-            aria-label="Отчество"
-            className="h-8 min-w-36 rounded-md border border-input bg-background px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-            value={row.original.middleName}
-            onChange={(event) =>
-              updateUser(
-                row.original.clientId,
-                "middleName",
-                event.target.value,
-              )
-            }
-          />
-        ),
+        cell: ({ row }) =>
+          renderEditableCell(
+            "Отчество",
+            "middleName",
+            row.original,
+            updateUser,
+          ),
       },
     ],
     [cancelUserChanges, deletingId, deleteUser, saveUser, savingId, updateUser],
