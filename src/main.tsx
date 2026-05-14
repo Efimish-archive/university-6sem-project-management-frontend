@@ -17,7 +17,7 @@ import {
 import HomePage from "@/pages/HomePage";
 import RealtimePage from "@/pages/RealtimePage";
 import UsersPage from "@/pages/UsersPage";
-import CarsPage from "@/pages/CarsPage";
+import NumbersPage from "@/pages/NumbersPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 
@@ -70,7 +70,7 @@ createRoot(document.getElementById("root")!).render(
                   <li>
                     <Link
                       className="flex gap-1 rounded-md bg-amber-300 p-4"
-                      to="/cars"
+                      to="/numbers"
                     >
                       <CarIcon />
                     </Link>
@@ -90,7 +90,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path="/" element={<HomePage />} />
                 <Route path="/realtime" element={<RealtimePage />} />
                 <Route path="/users" element={<UsersPage />} />
-                <Route path="/cars" element={<CarsPage />} />
+                <Route path="/numbers" element={<NumbersPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
